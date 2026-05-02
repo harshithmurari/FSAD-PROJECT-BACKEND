@@ -12,20 +12,25 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()   // allow login
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form.disable())   // ❗ IMPORTANT
-            .httpBasic(basic -> basic.disable()); // ❗ IMPORTANT
+    http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(
+                "/api/auth/**",
+                "/",
+                "/test",
+                "/api/test"
+            ).permitAll()
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form.disable())
+        .httpBasic(basic -> basic.disable());
 
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+    return http.build();
+}
 }
